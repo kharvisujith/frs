@@ -24,6 +24,12 @@ import { COLLECTIONS } from '@/constants';
 // READ OPERATIONS
 // ============================================
 
+
+/**
+ * Helper to get local image path
+ */
+const getLocalCategoryImage = (slug: string) => `/category/${slug}.png`;
+
 /**
  * Fetch all categories from Firestore
  */
@@ -32,10 +38,14 @@ export async function getCategories(): Promise<Category[]> {
         const categoriesRef = collection(db, COLLECTIONS.CATEGORIES);
         const snapshot = await getDocs(categoriesRef);
 
-        return snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        })) as Category[];
+        return snapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data,
+                image: getLocalCategoryImage(data.slug) // Override image with local path
+            };
+        }) as Category[];
     } catch (error) {
         console.error('Error fetching categories:', error);
         throw error;
@@ -54,9 +64,11 @@ export async function getCategoryById(id: string): Promise<Category | undefined>
             return undefined;
         }
 
+        const data = snapshot.data();
         return {
             id: snapshot.id,
-            ...snapshot.data()
+            ...data,
+            image: getLocalCategoryImage(data.slug) // Override image with local path
         } as Category;
     } catch (error) {
         console.error('Error fetching category:', error);
@@ -77,9 +89,11 @@ export async function getCategoryBySlug(slug: string): Promise<Category | undefi
             return undefined;
         }
 
+        const data = snapshot.docs[0].data();
         return {
             id: snapshot.docs[0].id,
-            ...snapshot.docs[0].data()
+            ...data,
+            image: getLocalCategoryImage(data.slug) // Override image with local path
         } as Category;
     } catch (error) {
         console.error('Error fetching category by slug:', error);

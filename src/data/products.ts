@@ -6,70 +6,70 @@ export const categories = [
     "slug": "construction",
     "description": "Quality supply of construction items for humanitarian and development projects.",
     "icon": "Hammer",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/construction.png"
   },
   {
     "name": "NFI Items Supply",
     "slug": "nfi-items",
     "description": "Quality supply of nfi items supply for humanitarian and development projects.",
     "icon": "Package",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/nfi-items.png"
   },
   {
     "name": "Dignity Kits",
     "slug": "dignity-kits",
     "description": "Quality supply of dignity kits for humanitarian and development projects.",
     "icon": "Heart",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/dignity-kits.png"
   },
   {
     "name": "MHM Kits",
     "slug": "mhm-kits",
     "description": "Quality supply of mhm kits for humanitarian and development projects.",
     "icon": "Sparkles",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/mhm-kits.png"
   },
   {
     "name": "Fishing Items",
     "slug": "fishing-items",
     "description": "Quality supply of fishing items for humanitarian and development projects.",
     "icon": "Anchor",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/fishing-items.png"
   },
   {
     "name": "Baby Kits",
     "slug": "baby-kits",
     "description": "Quality supply of baby kits for humanitarian and development projects.",
     "icon": "Baby",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/baby-kits.png"
   },
   {
     "name": "Agriculture Seeds",
     "slug": "seeds",
     "description": "Quality supply of agriculture seeds for humanitarian and development projects.",
     "icon": "Sprout",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/seeds.png"
   },
   {
     "name": "Agriculture Tools",
     "slug": "agric-tools",
     "description": "Quality supply of agriculture tools for humanitarian and development projects.",
     "icon": "Wrench",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/agric-tools.png"
   },
   {
     "name": "Solar Supply",
     "slug": "solar",
     "description": "Quality supply of solar supply for humanitarian and development projects.",
     "icon": "Sun",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/solar.png"
   },
   {
     "name": "Tents and Shelters",
     "slug": "tents",
     "description": "Quality supply of tents and shelters for humanitarian and development projects.",
     "icon": "Tent",
-    "image": "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=600&q=80"
+    "image": "/category/tents.png"
   }
 ];
 
