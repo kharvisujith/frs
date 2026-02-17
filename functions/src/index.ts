@@ -1,9 +1,11 @@
 import { setGlobalOptions } from "firebase-functions";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
-import { defineSecret, defineString } from "firebase-functions/params";
+import { defineSecret } from "firebase-functions/params";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
-import sgMail from "@sendgrid/mail";
+
+import { generateContactEmailHtml, generateProductEmailHtml } from "./emailHelpers";
+import { sendEmail } from "./sendEmail";
 
 admin.initializeApp();
 
@@ -11,8 +13,8 @@ admin.initializeApp();
 const SENDGRID_API_KEY = defineSecret("SENDGRID_API_KEY");
 
 // Define Configuration Parameters
-const COMPANY_EMAIL = defineString("COMPANY_EMAIL");
-const FROM_EMAIL = defineString("FROM_EMAIL");
+const COMPANY_EMAIL = defineSecret("COMPANY_EMAIL");
+const FROM_EMAIL = defineSecret("FROM_EMAIL");
 
 // Optional: limit max instances
 setGlobalOptions({ maxInstances: 10 });
@@ -23,7 +25,7 @@ setGlobalOptions({ maxInstances: 10 });
 export const contactEmail = onDocumentCreated(
     {
         document: "contactEnquiries/{docId}",
-        secrets: [SENDGRID_API_KEY],
+        secrets: [SENDGRID_API_KEY, COMPANY_EMAIL, FROM_EMAIL],
     },
     async (event) => {
         const data = event.data?.data();
@@ -34,34 +36,21 @@ export const contactEmail = onDocumentCreated(
             return;
         }
 
-        // ✅ Set API key inside function
-        sgMail.setApiKey(SENDGRID_API_KEY.value());
-
-
-        const msg = {
-            to: COMPANY_EMAIL.value(),
-            from: FROM_EMAIL.value(), // MUST be verified in SendGrid
-            replyTo: data.email,
-            subject: `New Contact Enquiry from ${data.name}`,
-            html: `
-        <h2>New Contact Enquiry</h2>
-        <p><strong>Name:</strong> ${data.name}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
-        ${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ""}
-        <p><strong>Message:</strong></p>
-        <p>${data.message}</p>
-        <hr/>
-        <p>Document ID: ${docId}</p>
-      `,
-        };
+        const html = generateContactEmailHtml(data, docId);
 
         try {
-            await sgMail.send(msg);
-            logger.info("Contact email sent successfully");
+            await sendEmail({
+                apiKey: SENDGRID_API_KEY.value(),
+                to: COMPANY_EMAIL.value(),
+                from: FROM_EMAIL.value(),
+                subject: `New Contact Enquiry from ${data.name}`,
+                html: html,
+                replyTo: data.email,
+            });
 
             await event.data?.ref.update({ emailSent: true });
         } catch (error) {
-            logger.error("Failed to send contact email", { error });
+            // Error logged in sendEmail
             throw error;
         }
     }
@@ -73,7 +62,7 @@ export const contactEmail = onDocumentCreated(
 export const productEmail = onDocumentCreated(
     {
         document: "productEnquiries/{docId}",
-        secrets: [SENDGRID_API_KEY],
+        secrets: [SENDGRID_API_KEY, COMPANY_EMAIL, FROM_EMAIL],
     },
     async (event) => {
         const data = event.data?.data();
@@ -83,8 +72,6 @@ export const productEmail = onDocumentCreated(
             logger.error("Missing required fields in product enquiry", { data });
             return;
         }
-
-        sgMail.setApiKey(SENDGRID_API_KEY.value());
 
         let productName = "Unknown Product";
 
@@ -102,32 +89,21 @@ export const productEmail = onDocumentCreated(
             logger.warn("Could not fetch product details", { error });
         }
 
-        const msg = {
-            to: COMPANY_EMAIL.value(),
-            from: FROM_EMAIL.value(), // MUST be verified
-            replyTo: data.email,
-            subject: `New Product Enquiry: ${productName}`,
-            html: `
-        <h2>New Product Enquiry</h2>
-        <p><strong>Product:</strong> ${productName}</p>
-        <p><strong>Name:</strong> ${data.name}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
-        ${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ""}
-        ${data.organization ? `<p><strong>Organization:</strong> ${data.organization}</p>` : ""}
-        ${data.estimatedQuantity ? `<p><strong>Quantity:</strong> ${data.estimatedQuantity}</p>` : ""}
-        ${data.projectDescription ? `<p><strong>Description:</strong> ${data.projectDescription}</p>` : ""}
-        <hr/>
-        <p>Document ID: ${docId}</p>
-      `,
-        };
+        const html = generateProductEmailHtml(data, docId, productName);
 
         try {
-            await sgMail.send(msg);
-            logger.info("Product enquiry email sent successfully");
+            await sendEmail({
+                apiKey: SENDGRID_API_KEY.value(),
+                to: COMPANY_EMAIL.value(),
+                from: FROM_EMAIL.value(),
+                subject: `New Product Enquiry: ${productName}`,
+                html: html,
+                replyTo: data.email,
+            });
 
             await event.data?.ref.update({ emailSent: true });
         } catch (error) {
-            logger.error("Failed to send product enquiry email", { error });
+            // Error logged in sendEmail
             throw error;
         }
     }
