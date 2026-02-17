@@ -1,6 +1,6 @@
 import { setGlobalOptions } from "firebase-functions";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
-import { defineSecret } from "firebase-functions/params";
+import { defineSecret, defineString } from "firebase-functions/params";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import sgMail from "@sendgrid/mail";
@@ -10,11 +10,12 @@ admin.initializeApp();
 // ✅ Define SendGrid Secret (GEN 2 CORRECT WAY)
 const SENDGRID_API_KEY = defineSecret("SENDGRID_API_KEY");
 
+// Define Configuration Parameters
+const COMPANY_EMAIL = defineString("COMPANY_EMAIL");
+const FROM_EMAIL = defineString("FROM_EMAIL");
+
 // Optional: limit max instances
 setGlobalOptions({ maxInstances: 10 });
-
-// Company email to receive notifications
-const COMPANY_EMAIL = "sujithkahrvi12@gmail.com";
 
 // ===============================
 // CONTACT ENQUIRY EMAIL
@@ -36,9 +37,10 @@ export const contactEmail = onDocumentCreated(
         // ✅ Set API key inside function
         sgMail.setApiKey(SENDGRID_API_KEY.value());
 
+
         const msg = {
-            to: COMPANY_EMAIL,
-            from: "support@quickserve.business", // MUST be verified in SendGrid
+            to: COMPANY_EMAIL.value(),
+            from: FROM_EMAIL.value(), // MUST be verified in SendGrid
             replyTo: data.email,
             subject: `New Contact Enquiry from ${data.name}`,
             html: `
@@ -101,8 +103,8 @@ export const productEmail = onDocumentCreated(
         }
 
         const msg = {
-            to: COMPANY_EMAIL,
-            from: "kharvisuji66@gmail.com", // MUST be verified
+            to: COMPANY_EMAIL.value(),
+            from: FROM_EMAIL.value(), // MUST be verified
             replyTo: data.email,
             subject: `New Product Enquiry: ${productName}`,
             html: `
