@@ -1,6 +1,7 @@
 // Firebase configuration and initialization
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
 
 // Load environment variables for Node.js environment (migration scripts)
@@ -50,4 +51,8 @@ if (typeof window !== 'undefined') {
 const db = getFirestore(app);
 console.log('💾 Firestore connected');
 
-export { app, analytics, db };
+// Initialize Storage
+const storage = getStorage(app);
+console.log('📦 Storage connected');
+
+export { app, analytics, db, storage };
