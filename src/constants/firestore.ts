@@ -8,6 +8,7 @@ export const COLLECTIONS = {
     PRODUCTS: 'products',
     CONTACT_ENQUIRIES: 'contactEnquiries',
     PRODUCT_ENQUIRIES: 'productEnquiries',
+    ADMIN_USERS: 'adminUsers',
 } as const;
 
 export type CollectionName = typeof COLLECTIONS[keyof typeof COLLECTIONS];

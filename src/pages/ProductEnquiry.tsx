@@ -5,12 +5,12 @@ import { getProductById, saveProductEnquiry } from '@/services';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import type { Product } from '@/models';
 
 export default function ProductEnquiry() {
   const { id } = useParams<{ id: string }>();
-  const { toast } = useToast();
+  // const { toast } = useToast(); // Removed legacy hook
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -74,10 +74,8 @@ export default function ProductEnquiry() {
         projectDescription: form.description
       });
 
-      toast({
-        title: 'Enquiry Submitted Successfully!',
-        description: `Thank you for your enquiry about ${product.name}. We'll contact you within 24 hours.`,
-        className: 'bg-green-50 border-green-200 text-green-900'
+      toast.success('Enquiry Submitted Successfully!', {
+        description: `Thank you for your enquiry about ${product.name}. We'll contact you within 24 hours.`
       });
 
       // Clear form
@@ -91,10 +89,8 @@ export default function ProductEnquiry() {
       });
     } catch (error) {
       console.error('Error submitting enquiry:', error);
-      toast({
-        title: 'Submission Failed',
-        description: 'There was an error submitting your enquiry. Please try again or contact us directly.',
-        variant: 'destructive'
+      toast.error('Submission Failed', {
+        description: 'There was an error submitting your enquiry. Please try again or contact us directly.'
       });
     } finally {
       setSubmitting(false);

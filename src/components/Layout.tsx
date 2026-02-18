@@ -22,6 +22,11 @@ const navItems = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const isAdmin = typeof window !== 'undefined' ? sessionStorage.getItem('isAdmin') === 'true' : false;
+
+  const currentNavItems = isAdmin
+    ? [...navItems, { label: 'Admin Dashboard', path: '/admin', icon: Package }]
+    : navItems;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -47,7 +52,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
+            {currentNavItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
@@ -78,7 +83,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Mobile nav */}
         {mobileOpen && (
           <div className="md:hidden border-t bg-card">
-            {navItems.map((item) => (
+            {currentNavItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
@@ -147,8 +152,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           </div>
-          <div className="border-t border-primary-foreground/20 mt-8 pt-6 text-center text-xs text-primary-foreground/50">
-            © {new Date().getFullYear()} Future Resilience Services Ltd. All rights reserved.
+          <div className="border-t border-primary-foreground/20 mt-8 pt-6 text-center text-xs text-primary-foreground/50 flex flex-col items-center gap-2">
+            <p>© {new Date().getFullYear()} Future Resilience Services Ltd. All rights reserved.</p>
+            <Link to="/login" className="hover:text-primary-foreground/80 transition-colors flex items-center gap-1 opacity-50 hover:opacity-100">
+              Admin Login
+            </Link>
           </div>
         </div>
       </footer>

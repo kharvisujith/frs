@@ -14,7 +14,8 @@ import {
     deleteDoc,
     query,
     where,
-    Timestamp
+    Timestamp,
+    serverTimestamp
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Category } from '@/models';
@@ -105,10 +106,14 @@ export async function getCategoryBySlug(slug: string): Promise<Category | undefi
 /**
  * Create a new category
  */
-export async function createCategory(data: Omit<Category, 'id'>): Promise<string> {
+export async function createCategory(data: Omit<Category, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
         const categoriesRef = collection(db, COLLECTIONS.CATEGORIES);
-        const docRef = await addDoc(categoriesRef, data);
+        const docRef = await addDoc(categoriesRef, {
+            ...data,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+        });
         return docRef.id;
     } catch (error) {
         console.error('Error creating category:', error);

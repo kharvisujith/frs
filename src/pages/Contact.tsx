@@ -10,11 +10,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { saveContactEnquiry } from '@/services';
 
 export default function Contact() {
-  const { toast } = useToast();
+  // const { toast } = useToast(); // Removed legacy hook
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -35,19 +35,15 @@ export default function Contact() {
         message: form.message
       });
 
-      toast({
-        title: 'Message Sent Successfully!',
-        description: "Thank you for contacting us. We'll respond shortly.",
-        className: 'bg-green-50 border-green-200 text-green-900'
+      toast.success('Message Sent Successfully!', {
+        description: "Thank you for contacting us. We'll respond shortly."
       });
 
       setForm({ name: '', email: '', phone: '', message: '' });
     } catch (error) {
       console.error('Error submitting contact form:', error);
-      toast({
-        title: 'Submission Failed',
-        description: 'There was an error sending your message. Please try again.',
-        variant: 'destructive'
+      toast.error('Submission Failed', {
+        description: 'There was an error sending your message. Please try again.'
       });
     } finally {
       setSubmitting(false);
