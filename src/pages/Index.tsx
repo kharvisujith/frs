@@ -9,10 +9,10 @@ import { getCategories } from '@/services';
 import type { Category } from '@/models';
 
 const stats = [
-  { icon: Globe, label: 'Countries Served', value: '40+' },
-  { icon: Truck, label: 'Deliveries Completed', value: '5,000+' },
-  { icon: Shield, label: 'Years Experience', value: '15+' },
-  { icon: HeartHandshake, label: 'Partners Worldwide', value: '200+' }
+  { icon: Globe, label: 'Countries Served', value: '2+' },
+  { icon: Truck, label: 'Deliveries Completed', value: '20+' },
+  { icon: Shield, label: 'Years Experience', value: '1+' },
+  { icon: HeartHandshake, label: 'Partners Worldwide', value: '50+' }
 ];
 
 
@@ -20,19 +20,21 @@ export default function Index() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isAdmin = typeof window !== 'undefined' ? sessionStorage.getItem('isAdmin') === 'true' : false;
+
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+      setCategories(data);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      setError('Failed to load categories. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const data = await getCategories();
-        setCategories(data);
-      } catch (err) {
-        console.error('Error fetching categories:', err);
-        setError('Failed to load categories. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchCategories();
   }, []);
 
@@ -40,7 +42,7 @@ export default function Index() {
     <>
 
       {/* Hero */}
-      <section className="relative min-h-[85vh] flex items-center">
+      <section className="relative min-h-[45vh] flex items-center">
         <img
           src={heroImage}
           alt="Humanitarian supply warehouse"
@@ -90,7 +92,7 @@ export default function Index() {
       </section>
 
       {/* Stats */}
-      <section className="bg-primary text-primary-foreground py-10">
+      <section className="bg-primary text-primary-foreground py-5">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((s) => (
@@ -138,7 +140,7 @@ export default function Index() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {categories.map((cat) => (
-                <CategoryCard key={cat.slug} category={cat} />
+                <CategoryCard key={cat.slug} category={cat} isAdmin={isAdmin} onUpdated={fetchCategories} />
               ))}
             </div>
           )}

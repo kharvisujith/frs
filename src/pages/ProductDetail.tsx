@@ -1,28 +1,32 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Tag, Mail } from "lucide-react";
+import { ArrowLeft, Tag, Mail, Pencil } from "lucide-react";
 import { getProductById } from '@/services';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import EditProductDialog from "@/components/EditProductDialog";
 import type { Product } from "@/models";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [editOpen, setEditOpen] = useState(false);
+  const isAdmin = typeof window !== 'undefined' ? sessionStorage.getItem('isAdmin') === 'true' : false;
+
+  const fetchProduct = async () => {
+    if (!id) return;
+    try {
+      const data = await getProductById(id);
+      setProduct(data || null);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchProduct() {
-      if (!id) return;
-      try {
-        const data = await getProductById(id);
-        setProduct(data || null);
-      } catch (error) {
-        console.error('Error fetching product:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchProduct();
   }, [id]);
 
@@ -52,8 +56,19 @@ export default function ProductDetail() {
 
         <div className="grid md:grid-cols-2 gap-10">
           {/* Image */}
-          <div className="rounded-xl overflow-hidden bg-muted border">
+          <div className="relative rounded-xl overflow-hidden bg-muted border">
             <img src={product.image} alt={product.name} className="w-full aspect-square object-cover" />
+
+            {/* Admin Edit Button on image */}
+            {isAdmin && (
+              <button
+                onClick={() => setEditOpen(true)}
+                className="absolute top-3 right-3 z-10 p-2.5 rounded-full bg-white/90 hover:bg-white text-primary shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110"
+                title="Edit Product"
+              >
+                <Pencil className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
           {/* Info */}
@@ -78,6 +93,16 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+
+      {/* Edit Product Dialog */}
+      {isAdmin && product && (
+        <EditProductDialog
+          product={product}
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          onSuccess={fetchProduct}
+        />
+      )}
     </section>
   );
 }

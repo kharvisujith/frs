@@ -11,22 +11,24 @@ export default function Products() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const isAdmin = typeof window !== 'undefined' ? sessionStorage.getItem('isAdmin') === 'true' : false;
+
+  const fetchData = async () => {
+    try {
+      const [categoriesData, productsData] = await Promise.all([
+        getCategories(),
+        getProducts()
+      ]);
+      setCategories(categoriesData);
+      setProducts(productsData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [categoriesData, productsData] = await Promise.all([
-          getCategories(),
-          getProducts()
-        ]);
-        setCategories(categoriesData);
-        setProducts(productsData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchData();
   }, []);
 
@@ -101,7 +103,7 @@ export default function Products() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filtered.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} isAdmin={isAdmin} onUpdated={fetchData} />
               ))}
             </div>
           )}
