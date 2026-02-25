@@ -117,7 +117,7 @@ export default function About() {
             <div className="bg-card border rounded-xl p-6">
               <h4 className="font-bold text-primary mb-2">Email</h4>
               <p className="text-sm text-muted-foreground">
-                frsljuba@gmail.com
+                fsrl@frsl.net
               </p>
             </div>
           </div>

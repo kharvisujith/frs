@@ -146,7 +146,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 Contact
               </h4>
               <div className="text-sm text-primary-foreground/70 space-y-1">
-                <p>frsljuba@gmail.com</p>
+                <p>fsrl@frsl.net</p>
                 <p>0926458778 / 0982839999</p>
                 <p>Mahatta yei, facebook road, JUBA, SOUTH SUDAN</p>
               </div>

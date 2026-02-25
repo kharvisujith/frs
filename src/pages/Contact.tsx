@@ -194,7 +194,7 @@ export default function Contact() {
                     Email Address
                   </h3>
                   <p className="text-muted-foreground text-sm">
-                    frsljuba@gmail.com
+                    fsrl@frsl.net
                   </p>
                 </div>
               </div>
